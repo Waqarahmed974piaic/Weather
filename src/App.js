@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Axios from "axios";
 import CityComponent from "./modules/CityComponent";
 import WeatherComponent from "./modules/WeatherInfoComponent";
-
 export const WeatherIcons = {
   "01d": "/react-weather-app/icons/sunny.svg",
   "01n": "/react-weather-app/icons/night.svg",
@@ -57,15 +56,92 @@ function App() {
     );
     updateWeather(response.data);
   };
+
+  //-------------------------------------
+
+  const [dt, setDt] = useState([]);
+
+  useEffect(() => {
+    var axios = require('axios');
+
+    var config = {
+      method: 'get',
+      url: 'https://weatherforecast20211114184109.azurewebsites.net/WeatherForecast',
+      headers: {
+      }
+    };
+
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+        setDt(response.data)
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [])
+
+
+
+
+
+
   return (
-    <Container>
-      <AppLabel>Weather App</AppLabel>
-      {city && weather ? (
-        <WeatherComponent weather={weather} city={city} />
-      ) : (
-        <CityComponent updateCity={updateCity} fetchWeather={fetchWeather} />
-      )}
-    </Container>
+
+
+    <>
+      <Container>
+        <AppLabel>Weather App</AppLabel>
+        {city && weather ? (
+          <WeatherComponent weather={weather} city={city} />
+        ) : (
+          <CityComponent updateCity={updateCity} fetchWeather={fetchWeather} />
+        )}
+      </Container>
+      <br />
+      <h3>Forecast</h3>
+      <div className="container">
+        <div className="row">
+          <div className="col heading">Date</div>
+          <div className="col heading">Day</div>
+          <div className="col heading">TemperatureC</div>
+          <div className="col heading">Humidity</div>
+          <div className="col heading">Pressure</div>
+          <div className="col heading">Wind</div>
+        </div>
+      </div>
+      {dt.length > 0 ?
+        dt.map((v, i) => {
+          return (
+            <div className="container">
+              <div className="row">
+                <div className="col">{v.date}</div>
+                <div className="col">{v.day}</div>
+                <div className="col">{v.temperatureC}</div>
+                <div className="col">{v.humidity}</div>
+                <div className="col">{v.pressure}</div>
+                <div className="col">{v.wind}</div>
+              </div>
+            </div>
+          );
+
+        }) : null
+
+      }
+
+    </>
+
+
+
+
+
+
+
+
+
+
+
+
   );
 }
 
